@@ -62,6 +62,7 @@ cronograma-fiv-app/
 ├── main.py
 ├── cronograma.spec
 ├── requirements.txt
+├── environment.yaml
 ├── LICENSE
 ├── README.md
 ├── .gitignore
