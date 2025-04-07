@@ -48,7 +48,7 @@ python main.py
 ## 📦 Compilação para Windows (.exe)
 
 ```bash
-pyinstaller --onefile --windowed --icon=icon.png --add-data "logo.png;." main.py
+pyinstaller --onefile --windowed --icon=images/icon.ico --add-data "images/logo.png;images" main.py
 ```
 
 Ou utilize o arquivo `cronograma.spec` já incluído no projeto.
@@ -60,13 +60,15 @@ Ou utilize o arquivo `cronograma.spec` já incluído no projeto.
 ```
 cronograma-fiv-app/
 ├── main.py
-├── icon.png
-├── logo.png
 ├── cronograma.spec
 ├── requirements.txt
 ├── LICENSE
 ├── README.md
-└── .gitignore
+├── .gitignore
+└── images/
+    ├── logo.png
+    └── icon.ico
+
 ```
 
 ---
