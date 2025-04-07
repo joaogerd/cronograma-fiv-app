@@ -17,7 +17,7 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
         """Inicializa a interface gráfica do aplicativo."""
         super().__init__()
         self.setWindowTitle("Cronograma Completo - Sincronização / FIV / Prenhez")
-        self.setGeometry(100, 100, 500, 700)
+        self.setGeometry(100, 100, 500, 750)
 
         # Ícone do programa
         icon_path = os.path.join(os.path.dirname(__file__), "images", "icon.ico")
@@ -96,7 +96,7 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
         elif tipo == "transferencia":
             d0 = base - timedelta(days=17)
         elif tipo == "nascimento":
-            d0 = base - timedelta(days=297)  # 280 + 17
+            d0 = base - timedelta(days=290)  # 280 + 10
         else:
             raise ValueError("Tipo inválido.")
 
