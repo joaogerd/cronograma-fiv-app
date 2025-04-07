@@ -3,9 +3,65 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
+def find_data_file(filename: str) -> Path:
+    """
+    Encontra e retorna o caminho para um arquivo de dados de forma robusta,
+    considerando se a aplicação está empacotada (frozen) ou sendo executada a partir do código fonte.
+
+    Quando a aplicação está empacotada (por exemplo, usando PyInstaller), o atributo sys.frozen 
+    será True. Nesse caso, o diretório base utilizado será o diretório onde o executável está localizado.
+    Se a aplicação não estiver empacotada, o diretório base será aquele onde o arquivo fonte (__file__) se encontra.
+
+    Parâmetros:
+        filename (str): Nome do arquivo ou caminho relativo do arquivo de dados a ser encontrado,
+                        em relação ao diretório base da aplicação.
+
+    Retorna:
+        Path: Um objeto do tipo Path que aponta para o arquivo de dados.
+
+    Exemplos:
+        >>> find_data_file("images/logo.png")
+        PosixPath('/caminho/do/projeto/images/logo.png')
+    """
+    if getattr(sys, "frozen", False):
+        # A aplicação está empacotada: utiliza o diretório do executável.
+        datadir = Path(sys.executable).parent
+    else:
+        # A aplicação não está empacotada: utiliza o diretório do script.
+        datadir = Path(__file__).parent
+    return datadir / filename
+
 # Constantes
 MM_TO_PT = 2.83465
 OFFSETS = {"inicio": 0, "transferencia": -17, "nascimento": -290}
+
+def find_data_file(filename: str) -> Path:
+    """
+    Encontra e retorna o caminho para um arquivo de dados de forma robusta,
+    considerando se a aplicação está empacotada (frozen) ou sendo executada a partir do código fonte.
+
+    Quando a aplicação está empacotada (por exemplo, usando PyInstaller), o atributo sys.frozen 
+    será True. Nesse caso, o diretório base utilizado será o diretório onde o executável está localizado.
+    Se a aplicação não estiver empacotada, o diretório base será aquele onde o arquivo fonte (__file__) se encontra.
+
+    Parâmetros:
+        filename (str): Nome do arquivo ou caminho relativo do arquivo de dados a ser encontrado,
+                        em relação ao diretório base da aplicação.
+
+    Retorna:
+        Path: Um objeto do tipo Path que aponta para o arquivo de dados.
+
+    Exemplos:
+        >>> find_data_file("images/logo.png")
+        PosixPath('/caminho/do/projeto/images/logo.png')
+    """
+    if getattr(sys, "frozen", False):
+        # A aplicação está empacotada: utiliza o diretório do executável.
+        datadir = Path(sys.executable).parent
+    else:
+        # A aplicação não está empacotada: utiliza o diretório do script.
+        datadir = Path(__file__).parent
+    return datadir / filename
 
 class CronogramaCompletoApp(QtWidgets.QWidget):
     """
@@ -26,11 +82,10 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
 
     def setup_icons(self):
         """Carrega e configura ícones e logos, se disponíveis."""
-        base_path = Path(__file__).parent / "images"
-        icon_file = base_path / "icon.ico"
+        icon_file = find_data_file("images/icon.ico")
         if icon_file.exists():
             self.setWindowIcon(QtGui.QIcon(str(icon_file)))
-        self.logo_path = base_path / "logo.png"
+        self.logo_path = find_data_file("images/logo.png")
 
     def init_ui(self):
         """Configura os elementos da interface gráfica."""
