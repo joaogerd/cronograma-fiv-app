@@ -6,7 +6,7 @@ from pathlib import Path
 company_name = "Projeto Bovino"
 product_name = "Cronograma Reprodutivo"
 TARGET_NAME = "cronograma.exe"
-UPGRADE_CODE = "{150524-0000-0000-0000-000000000001}"  # GUID válido para upgrades
+UPGRADE_CODE = "{A12F1E66-3E25-4B7A-BF91-69FEC0A63F7D}"  # GUID válido para upgrades
 
 def find_data_file(filename: str) -> Path:
     """
@@ -83,7 +83,7 @@ bdist_msi_options = {
     "summary_data": {
         "author": "João Gerd Zell de Mattos",
         "comments": "Aplicativo de GUI para cálculo automatizado de cronogramas reprodutivos bovinos",
-        "keywords": "FIV, OPU, reprodução bovina",
+        "keywords": "FIV, IATF, OPU, reprodução bovina",
     },
     "install_icon": str(find_data_file("images/icon.ico")),
     "initial_target_dir": f"[ProgramFilesFolder]{company_name}\\{product_name}",
@@ -120,7 +120,7 @@ options = {
 cx_Freeze.setup(
     name="Cronograma Reprodutivo Bovino",
     version="1.0",
-    description="Ferramenta para cálculo automatizado de cronogramas FIV/OPU",
+    description="Ferramenta para cálculo automatizado de cronogramas IATF/FIV/OPU",
     options=options,
     executables=executables,
 )
