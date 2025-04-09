@@ -292,6 +292,11 @@ class AboutDialog(QtWidgets.QDialog):
             "<h2>Cronograma Completo</h2>"
             "<p>Aplicativo para cálculo de cronogramas reprodutivos: Sincronização, FIV/IATF e Prenhez.</p>"
             "<p>Desenvolvido por: João Gerd Zell de Mattos</p>"
+            "<p>Colaboradores:</p>"
+            "<ul>"
+            "<li>Cleicione Moura de Oliveira</li>"
+            "<li>Rafael Augusto Satrapa</li>"
+            "</ul>"          
             "<p>Versão: 1.0</p>"
             "<p>Licenciado sob a <a href='https://www.gnu.org/licenses/lgpl-3.0.html' target='_blank'>LGPLv3</a>.</p>"
             "<p>Veja o projeto em <a href='https://github.com/joaogerd/cronograma-fiv-app' target='_blank'>GitHub</a>.</p>"
@@ -314,8 +319,8 @@ class AboutDialog(QtWidgets.QDialog):
         layout.addWidget(doacao_label)
         
         # Carrega o QR Code a partir do arquivo images/qr-code.png
-        base_path = Path(__file__).parent / "images"
-        qr_file = (base_path / "qr-code.png").resolve()
+        
+        qr_file = find_data_file("images/qr-code.png")
         qr_label = QtWidgets.QLabel()
         if qr_file.exists():
             qr_pixmap = QtGui.QPixmap(str(qr_file))
