@@ -3,34 +3,6 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
-def find_data_file(filename: str) -> Path:
-    """
-    Encontra e retorna o caminho para um arquivo de dados de forma robusta,
-    considerando se a aplicação está empacotada (frozen) ou sendo executada a partir do código fonte.
-
-    Quando a aplicação está empacotada (por exemplo, usando PyInstaller), o atributo sys.frozen 
-    será True. Nesse caso, o diretório base utilizado será o diretório onde o executável está localizado.
-    Se a aplicação não estiver empacotada, o diretório base será aquele onde o arquivo fonte (__file__) se encontra.
-
-    Parâmetros:
-        filename (str): Nome do arquivo ou caminho relativo do arquivo de dados a ser encontrado,
-                        em relação ao diretório base da aplicação.
-
-    Retorna:
-        Path: Um objeto do tipo Path que aponta para o arquivo de dados.
-
-    Exemplos:
-        >>> find_data_file("images/logo.png")
-        PosixPath('/caminho/do/projeto/images/logo.png')
-    """
-    if getattr(sys, "frozen", False):
-        # A aplicação está empacotada: utiliza o diretório do executável.
-        datadir = Path(sys.executable).parent
-    else:
-        # A aplicação não está empacotada: utiliza o diretório do script.
-        datadir = Path(__file__).parent
-    return datadir / filename
-
 # Constantes
 MM_TO_PT = 2.83465
 OFFSETS = {"inicio": 0, "transferencia": -17, "nascimento": -290}
@@ -76,7 +48,7 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Cronograma Completo - Sincronização / FIV / Prenhez")
-        self.setGeometry(100, 100, 500, 850)
+        self.setGeometry(100, 100, 600, 950)
         self.setup_icons()
         self.init_ui()
 
@@ -95,7 +67,7 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
         if self.logo_path.exists():
             logo_label = QtWidgets.QLabel()
             pixmap = QtGui.QPixmap(str(self.logo_path))
-            logo_label.setPixmap(pixmap.scaledToWidth(500, QtCore.Qt.SmoothTransformation))
+            logo_label.setPixmap(pixmap.scaledToWidth(600, QtCore.Qt.SmoothTransformation))
             logo_label.setAlignment(QtCore.Qt.AlignCenter)
             layout.addWidget(logo_label)
 
@@ -105,9 +77,9 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
 
         self.combo_opcao = QtWidgets.QComboBox()
         self.combo_opcao.addItems([
-            "Início do protocolo (D0 - Sincronização)",
-            "Transferência de embrião (D7 - FIV)",
-            "Nascimento desejado (D280 - Prenhez)"
+            "Início do protocolo hormonal",
+            "Transferência de embrião",
+            "Nascimento desejado"
         ])
         input_layout.addRow("Escolha a base para o cálculo:", self.combo_opcao)
 
@@ -178,10 +150,10 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
         d0 = base + timedelta(days=OFFSETS[tipo])
         
         sincronizacao = {
-            "D0 - Início da sincronização": d0,
-            "D8 - Retirada do implante + BE": d0 + timedelta(days=8),
+            "D0 - Implante Vaginal + BE": d0,
+            "D8 - Retirada do implante Vaginal + CE + PGF2α": d0 + timedelta(days=8),
             "D9 - OPU": d0 + timedelta(days=9),
-            "D10 - FIV": d0 + timedelta(days=10)
+            "D10 - IATF (Não Receptora)": d0 + timedelta(days=10)
         }
 
         d_fiv0 = d0 + timedelta(days=10)
@@ -273,21 +245,23 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
         page = 1
     
         logo = QtGui.QPixmap(str(self.logo_path)) if self.logo_path.exists() else None
-    
+        logo_width = logo.width()
+        logo_height = logo.height()
+
         while y_offset < total_height:
             if page > 1:
                 printer.newPage()
     
             # Cabeçalho: desenha o logo, se disponível
             if logo:
-                largura_logo = min(largura_util, 450)
+                largura_logo = page_rect.width()
                 altura_logo = logo.height() * (largura_logo / logo.width())
-                pos_x = margem_esq + (largura_util - largura_logo) / 2
-                pos_y = margem_sup - altura_logo + largura_util * 0.05
+                pos_x = (page_rect.width() - largura_logo) / 2
+                pos_y = margem_sup - altura_logo + altura_util * 0.1
                 painter.drawPixmap(pos_x, pos_y, logo.scaledToWidth(largura_logo, QtCore.Qt.SmoothTransformation))
     
             painter.save()
-            painter.translate(margem_esq, margem_sup + largura_util * 0.15 - y_offset)
+            painter.translate(margem_esq, margem_sup + largura_util * 0.25 - y_offset)
             layout.draw(painter, QtGui.QAbstractTextDocumentLayout.PaintContext())
             painter.restore()
     
@@ -303,7 +277,7 @@ class CronogramaCompletoApp(QtWidgets.QWidget):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyle(QtWidgets.QStyleFactory.create(QtWidgets.QStyleFactory.keys()[0]))
+    #app.setStyle(QtWidgets.QStyleFactory.create(QtWidgets.QStyleFactory.keys()[0]))
     window = CronogramaCompletoApp()
     window.show()
     sys.exit(app.exec_())
