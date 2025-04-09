@@ -110,6 +110,7 @@ options = {
         "include_files": [
             (find_data_file("images/icon.ico"), "images/icon.ico"),
             (find_data_file("images/logo.png"), "images/logo.png"),
+            (find_data_file("images/qr-code.png"), "images/qr-code.png"),
         ],
     },
     "bdist_msi": bdist_msi_options,
