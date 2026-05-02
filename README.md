@@ -2,7 +2,7 @@
 
 Aplicativo para cálculo e organização de cronogramas reprodutivos bovinos, com foco em protocolos de sincronização, FIV/PIVE, transferência de embriões, acompanhamento de prenhez e rotinas associadas.
 
-> Estado atual: o projeto ainda é uma aplicação desktop em Python/PyQt5. A próxima etapa planejada é migrar o produto para um aplicativo Android nativo, simples, robusto e adequado para uso em campo.
+> Estado atual: o repositório possui a aplicação desktop original em Python/PyQt5 e uma base inicial Android nativa em Kotlin/Jetpack Compose em desenvolvimento.
 
 ## Objetivo do produto
 
@@ -28,13 +28,25 @@ A versão atual em Python/PyQt5 permite:
 - visualizar o cronograma calculado;
 - imprimir o cronograma na aplicação desktop.
 
+A base Android inicial já contém:
+
+- projeto Gradle Kotlin DSL;
+- módulo Android `app`;
+- `MainActivity` em Kotlin;
+- Jetpack Compose;
+- Material 3;
+- tema inicial;
+- tela placeholder de bootstrap.
+
 ## Stack atual
+
+### Desktop legado
 
 - Python 3.8+
 - PyQt5
 - Aplicação desktop para Windows/Linux
 
-Execução local:
+Execução local da versão desktop:
 
 ```bash
 pip install -r requirements.txt
@@ -43,22 +55,34 @@ python main.py
 
 Também há um ambiente Conda básico em `environment.yaml`.
 
+### Android em desenvolvimento
+
+- Kotlin;
+- Android Gradle Plugin 8.13.x;
+- Jetpack Compose;
+- Material 3;
+- JDK 17;
+- Android SDK Platform 36.
+
+Instruções iniciais de build Android:
+
+- [`docs/ANDROID_BUILD.md`](docs/ANDROID_BUILD.md)
+
 ## Limitações atuais
 
-A versão atual ainda não possui:
+A versão Android ainda não possui:
 
-- projeto Android;
-- estrutura Gradle/Kotlin;
+- modelos de domínio;
+- geração real de cronogramas;
 - persistência local;
 - histórico de cronogramas;
 - cadastro editável de protocolos;
 - notificações e lembretes;
 - exportação mobile em PDF/compartilhamento;
 - testes automatizados;
-- CI/CD;
-- arquitetura separada entre interface, domínio, dados e persistência.
+- CI/CD completo.
 
-Além disso, a lógica de interface e a lógica de cálculo ainda estão concentradas em `main.py`, o que é aceitável para um protótipo desktop, mas insuficiente para um aplicativo Android evolutivo.
+Além disso, a lógica de interface e a lógica de cálculo da versão desktop ainda estão concentradas em `main.py`, o que é aceitável para um protótipo desktop, mas insuficiente para um aplicativo Android evolutivo.
 
 ## Roadmap Android
 
