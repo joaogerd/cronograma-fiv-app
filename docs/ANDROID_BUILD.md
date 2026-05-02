@@ -12,16 +12,18 @@ The Android project is currently in bootstrap stage. It includes:
 - Jetpack Compose setup;
 - minimal `MainActivity`;
 - basic Material 3 theme;
+- temporary launcher icon resources;
 - placeholder screen identifying the Android base.
 
 No production feature has been implemented yet. Protocol modeling, schedule generation, persistence and reminders will be added in later phases.
 
 ## Requirements
 
-- Android Studio with support for recent Android Gradle Plugin versions;
+- Android Studio with support for Android Gradle Plugin 8.13.x;
 - JDK 17;
 - Android SDK Platform 36;
-- Gradle 9.3.1 or compatible wrapper when added.
+- Gradle 8.13 or compatible wrapper when added;
+- Kotlin 2.3.0.
 
 ## Suggested local commands
 
