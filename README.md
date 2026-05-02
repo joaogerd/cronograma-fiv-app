@@ -1,82 +1,117 @@
-# 🐄 Cronograma FIV App
+# Cronograma FIV App
 
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-green.svg)
-![Status](https://img.shields.io/badge/Status-Ativo-brightgreen)
+Aplicativo para cálculo e organização de cronogramas reprodutivos bovinos, com foco em protocolos de sincronização, FIV/PIVE, transferência de embriões, acompanhamento de prenhez e rotinas associadas.
 
-Aplicativo de interface gráfica (GUI) para cálculo automatizado de **cronogramas reprodutivos bovinos**, incluindo:
+> Estado atual: o projeto ainda é uma aplicação desktop em Python/PyQt5. A próxima etapa planejada é migrar o produto para um aplicativo Android nativo, simples, robusto e adequado para uso em campo.
 
-- ✅ Sincronização hormonal
-- ✅ Fertilização in vitro (FIV)
-- ✅ Diagnóstico de prenhez e nascimento previsto
+## Objetivo do produto
 
----
+O objetivo do projeto é evoluir para um aplicativo Android que permita a profissionais da reprodução bovina criar, visualizar, salvar e compartilhar cronogramas de FIV de forma rápida e confiável.
 
-## 🚀 Funcionalidades
+O app deverá atender principalmente:
 
-- Cálculo baseado em:
-  - Início do protocolo (D0)
-  - Transferência embrionária (D7)
-  - Data de nascimento estimada (D280)
-- Visual profissional e intuitivo
-- Interface amigável com **PyQt5**
-- Compatível com `.exe` para Windows
+- médicos veterinários;
+- técnicos de campo;
+- fazendas;
+- centrais de reprodução;
+- laboratórios de FIV;
+- equipes que realizam OPU, FIV, CIV, feeding, transferência de embriões e criopreservação.
 
----
+## Funcionalidades atuais
 
-## 🛠 Requisitos
+A versão atual em Python/PyQt5 permite:
 
-- Python 3.8 ou superior
+- informar uma data base;
+- calcular cronogramas a partir do início do protocolo, transferência embrionária ou nascimento desejado;
+- preencher nome da fazenda/propriedade;
+- preencher veterinário responsável;
+- visualizar o cronograma calculado;
+- imprimir o cronograma na aplicação desktop.
+
+## Stack atual
+
+- Python 3.8+
 - PyQt5
+- Aplicação desktop para Windows/Linux
 
-Instale as dependências:
+Execução local:
+
 ```bash
 pip install -r requirements.txt
-```
-
----
-
-## ▶️ Execução
-
-```bash
 python main.py
 ```
 
----
+Também há um ambiente Conda básico em `environment.yaml`.
 
-## 📦 Compilação para Windows (.exe)
+## Limitações atuais
 
-```bash
-pyinstaller --onefile --windowed --icon=images/icon.ico --add-data "images/logo.png;images" main.py
-```
+A versão atual ainda não possui:
 
-Ou utilize o arquivo `cronograma.spec` já incluído no projeto.
+- projeto Android;
+- estrutura Gradle/Kotlin;
+- persistência local;
+- histórico de cronogramas;
+- cadastro editável de protocolos;
+- notificações e lembretes;
+- exportação mobile em PDF/compartilhamento;
+- testes automatizados;
+- CI/CD;
+- arquitetura separada entre interface, domínio, dados e persistência.
 
----
+Além disso, a lógica de interface e a lógica de cálculo ainda estão concentradas em `main.py`, o que é aceitável para um protótipo desktop, mas insuficiente para um aplicativo Android evolutivo.
 
-## 🧠 Estrutura de Diretórios
+## Roadmap Android
 
-```
-cronograma-fiv-app/
-├── main.py
-├── cronograma.spec
-├── requirements.txt
-├── environment.yaml
-├── LICENSE
-├── README.md
-├── .gitignore
-└── images/
-    ├── logo.png
-    └── icon.ico
+O plano técnico para transformar este projeto em um aplicativo Android está documentado em:
 
-```
+- [`docs/ANDROID_ROADMAP.md`](docs/ANDROID_ROADMAP.md)
 
----
+Resumo do caminho recomendado:
 
-## 📜 Licença
+1. documentar e limpar o estado atual do projeto;
+2. criar base Android nativa com Kotlin e Jetpack Compose;
+3. modelar protocolos, etapas e cronogramas;
+4. implementar o motor de geração automática de cronogramas;
+5. criar a interface MVP;
+6. adicionar persistência local com Room;
+7. permitir edição de protocolos;
+8. implementar histórico, compartilhamento e lembretes;
+9. preparar testes, CI e release;
+10. validar monetização futura.
 
-Este projeto está licenciado sob a [LGPL v3](https://www.gnu.org/licenses/lgpl-3.0.html).
+## Arquitetura Android recomendada
 
+A migração recomendada é para Android nativo com:
 
+- Kotlin;
+- Jetpack Compose;
+- MVVM simples;
+- `StateFlow` para estado de tela;
+- Room para persistência local;
+- DataStore para preferências;
+- WorkManager/AlarmManager para lembretes;
+- JUnit para testes de domínio;
+- GitHub Actions para validação automática.
 
+A aplicação Python atual deve ser preservada como referência funcional, mas a versão Android deve ser reconstruída de forma nativa.
+
+## Protocolos de referência
+
+### Receptora
+
+- D0: sincronização;
+- D8: retirada de implante;
+- D17: transferência de embriões.
+
+### Doadora / PIVE
+
+- D9 ou D-1: OPU;
+- D10 ou D0: FIV;
+- D11 ou D1: CIV;
+- D13 ou D3: feeding 50%;
+- D15 ou D5: feeding 80%;
+- D17 ou D7: transferência de embriões ou criopreservação.
+
+## Licença
+
+Este projeto está licenciado sob a GNU Lesser General Public License v3.0 ou posterior. Veja o arquivo [`LICENSE`](LICENSE).
