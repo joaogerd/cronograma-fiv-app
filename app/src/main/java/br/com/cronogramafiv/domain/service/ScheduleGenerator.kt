@@ -72,13 +72,23 @@ class ScheduleGenerator(
     private fun ReproductiveProtocol.requiredDayOffsetForAnchor(anchor: ScheduleAnchor): Int {
         val candidate = when (anchor) {
             ScheduleAnchor.PROTOCOL_START -> 0
-            ScheduleAnchor.EMBRYO_TRANSFER -> findStepOffsetByKeywords(
-                requiredKeywords = listOf("transfer"),
-                acceptedAlternatives = listOf("te"),
+            ScheduleAnchor.EMBRYO_TRANSFER -> findStepOffsetByTerms(
+                containsAny = listOf(
+                    "embryo transfer",
+                    "transferencia",
+                    "transferência",
+                    "transfer",
+                ),
+                exactTokens = listOf("te"),
             )
-            ScheduleAnchor.EXPECTED_BIRTH -> findStepOffsetByKeywords(
-                requiredKeywords = listOf("birth"),
-                acceptedAlternatives = listOf("nascimento"),
+            ScheduleAnchor.EXPECTED_BIRTH -> findStepOffsetByTerms(
+                containsAny = listOf(
+                    "expected birth",
+                    "birth",
+                    "nascimento",
+                    "parto",
+                ),
+                exactTokens = emptyList(),
             )
         }
 
@@ -87,14 +97,18 @@ class ScheduleGenerator(
         )
     }
 
-    private fun ReproductiveProtocol.findStepOffsetByKeywords(
-        requiredKeywords: List<String>,
-        acceptedAlternatives: List<String>,
+    private fun ReproductiveProtocol.findStepOffsetByTerms(
+        containsAny: List<String>,
+        exactTokens: List<String>,
     ): Int? {
         return orderedSteps.firstOrNull { step ->
             val searchableText = "${step.id} ${step.title} ${step.description.orEmpty()}".lowercase()
-            requiredKeywords.any { keyword -> searchableText.contains(keyword) } ||
-                acceptedAlternatives.any { keyword -> searchableText.contains(keyword) }
+            val tokens = searchableText
+                .split(Regex("[^a-z0-9áàâãéêíóôõúç]+"))
+                .filter { it.isNotBlank() }
+
+            containsAny.any { term -> searchableText.contains(term) } ||
+                exactTokens.any { token -> token in tokens }
         }?.dayOffset
     }
 
