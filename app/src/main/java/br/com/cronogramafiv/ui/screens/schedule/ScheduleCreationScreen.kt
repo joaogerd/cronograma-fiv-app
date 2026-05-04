@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,32 +29,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import br.com.cronogramafiv.domain.model.BuiltInProtocols
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.com.cronogramafiv.domain.model.ReproductiveProtocol
 import br.com.cronogramafiv.domain.model.Schedule
 import br.com.cronogramafiv.domain.model.ScheduleAnchor
 import br.com.cronogramafiv.domain.model.ScheduleEvent
-import br.com.cronogramafiv.domain.service.ScheduleGenerator
 import br.com.cronogramafiv.ui.theme.CronogramaFivTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+
+@Composable
+fun ScheduleCreationRoute(
+    viewModel: ScheduleCreationViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    ScheduleCreationScreen(
+        uiState = uiState,
+        onProtocolSelected = viewModel::onProtocolSelected,
+        onAnchorSelected = viewModel::onAnchorSelected,
+        onDateTextChanged = viewModel::onDateTextChanged,
+        onFarmNameChanged = viewModel::onFarmNameChanged,
+        onResponsibleNameChanged = viewModel::onResponsibleNameChanged,
+        onGenerateSchedule = viewModel::generateSchedule,
+    )
+}
 
 @Composable
 fun ScheduleCreationScreen(
-    generator: ScheduleGenerator = remember { ScheduleGenerator() },
+    uiState: ScheduleCreationUiState,
+    onProtocolSelected: (ReproductiveProtocol) -> Unit,
+    onAnchorSelected: (ScheduleAnchor) -> Unit,
+    onDateTextChanged: (String) -> Unit,
+    onFarmNameChanged: (String) -> Unit,
+    onResponsibleNameChanged: (String) -> Unit,
+    onGenerateSchedule: () -> Unit,
 ) {
-    val protocols = remember { BuiltInProtocols.all }
-    val anchors = remember { ScheduleAnchor.entries }
-
-    var selectedProtocol by remember { mutableStateOf(protocols.first()) }
-    var selectedAnchor by remember { mutableStateOf(ScheduleAnchor.PROTOCOL_START) }
-    var dateText by remember { mutableStateOf(LocalDate.now().toString()) }
-    var farmName by remember { mutableStateOf("") }
-    var responsibleName by remember { mutableStateOf("") }
-    var generatedSchedule by remember { mutableStateOf<Schedule?>(null) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,32 +75,21 @@ fun ScheduleCreationScreen(
         HeaderSection()
 
         ProtocolSelector(
-            selectedProtocol = selectedProtocol,
-            protocols = protocols,
-            onProtocolSelected = {
-                selectedProtocol = it
-                generatedSchedule = null
-                errorMessage = null
-            },
+            selectedProtocol = uiState.selectedProtocol,
+            protocols = uiState.protocols,
+            onProtocolSelected = onProtocolSelected,
         )
 
         AnchorSelector(
-            selectedAnchor = selectedAnchor,
-            anchors = anchors,
-            onAnchorSelected = {
-                selectedAnchor = it
-                generatedSchedule = null
-                errorMessage = null
-            },
+            selectedAnchor = uiState.selectedAnchor,
+            anchors = uiState.anchors,
+            onAnchorSelected = onAnchorSelected,
         )
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = dateText,
-            onValueChange = {
-                dateText = it
-                errorMessage = null
-            },
+            value = uiState.dateText,
+            onValueChange = onDateTextChanged,
             label = { Text("Data de referência") },
             supportingText = { Text("Use o formato AAAA-MM-DD. Exemplo: 2026-01-10") },
             singleLine = true,
@@ -97,54 +97,32 @@ fun ScheduleCreationScreen(
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = farmName,
-            onValueChange = { farmName = it },
+            value = uiState.farmName,
+            onValueChange = onFarmNameChanged,
             label = { Text("Fazenda / propriedade") },
             singleLine = true,
         )
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = responsibleName,
-            onValueChange = { responsibleName = it },
+            value = uiState.responsibleName,
+            onValueChange = onResponsibleNameChanged,
             label = { Text("Responsável") },
             singleLine = true,
         )
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                val parsedDate = parseDate(dateText)
-                if (parsedDate == null) {
-                    errorMessage = "Data inválida. Use o formato AAAA-MM-DD."
-                    generatedSchedule = null
-                } else {
-                    runCatching {
-                        generator.generate(
-                            protocol = selectedProtocol,
-                            anchor = selectedAnchor,
-                            anchorDate = parsedDate,
-                            farmName = farmName,
-                            responsibleName = responsibleName,
-                        )
-                    }.onSuccess {
-                        generatedSchedule = it
-                        errorMessage = null
-                    }.onFailure {
-                        generatedSchedule = null
-                        errorMessage = it.message ?: "Não foi possível gerar o cronograma."
-                    }
-                }
-            },
+            onClick = onGenerateSchedule,
         ) {
             Text("Gerar cronograma")
         }
 
-        errorMessage?.let { message ->
+        uiState.errorMessage?.let { message ->
             ErrorCard(message = message)
         }
 
-        generatedSchedule?.let { schedule ->
+        uiState.generatedSchedule?.let { schedule ->
             ScheduleResult(schedule = schedule)
         }
     }
@@ -323,27 +301,20 @@ private fun ScheduleEventCard(event: ScheduleEvent) {
     }
 }
 
-private val ScheduleAnchor.label: String
-    get() = when (this) {
-        ScheduleAnchor.PROTOCOL_START -> "Início do protocolo"
-        ScheduleAnchor.EMBRYO_TRANSFER -> "Transferência embrionária"
-        ScheduleAnchor.EXPECTED_BIRTH -> "Nascimento previsto"
-    }
-
-private fun parseDate(value: String): LocalDate? {
-    return try {
-        LocalDate.parse(value.trim())
-    } catch (_: DateTimeParseException) {
-        null
-    }
-}
-
 private fun LocalDate.formatPtBr(): String = format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
 @Preview(showBackground = true)
 @Composable
 private fun ScheduleCreationScreenPreview() {
     CronogramaFivTheme {
-        ScheduleCreationScreen()
+        ScheduleCreationScreen(
+            uiState = ScheduleCreationUiState(),
+            onProtocolSelected = {},
+            onAnchorSelected = {},
+            onDateTextChanged = {},
+            onFarmNameChanged = {},
+            onResponsibleNameChanged = {},
+            onGenerateSchedule = {},
+        )
     }
 }
