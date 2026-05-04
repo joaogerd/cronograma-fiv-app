@@ -34,14 +34,20 @@ import br.com.cronogramafiv.domain.model.ReproductiveProtocol
 import br.com.cronogramafiv.domain.model.Schedule
 import br.com.cronogramafiv.domain.model.ScheduleAnchor
 import br.com.cronogramafiv.domain.model.ScheduleEvent
+import br.com.cronogramafiv.domain.repository.ScheduleRepository
 import br.com.cronogramafiv.ui.theme.CronogramaFivTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ScheduleCreationRoute(
-    viewModel: ScheduleCreationViewModel = viewModel(),
+    scheduleRepository: ScheduleRepository,
 ) {
+    val viewModel: ScheduleCreationViewModel = viewModel(
+        factory = ScheduleCreationViewModelFactory(
+            scheduleRepository = scheduleRepository,
+        ),
+    )
     val uiState by viewModel.uiState.collectAsState()
 
     ScheduleCreationScreen(
@@ -52,6 +58,7 @@ fun ScheduleCreationRoute(
         onFarmNameChanged = viewModel::onFarmNameChanged,
         onResponsibleNameChanged = viewModel::onResponsibleNameChanged,
         onGenerateSchedule = viewModel::generateSchedule,
+        onSaveSchedule = viewModel::saveGeneratedSchedule,
     )
 }
 
@@ -64,6 +71,7 @@ fun ScheduleCreationScreen(
     onFarmNameChanged: (String) -> Unit,
     onResponsibleNameChanged: (String) -> Unit,
     onGenerateSchedule: () -> Unit,
+    onSaveSchedule: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -122,8 +130,15 @@ fun ScheduleCreationScreen(
             ErrorCard(message = message)
         }
 
+        uiState.successMessage?.let { message ->
+            SuccessCard(message = message)
+        }
+
         uiState.generatedSchedule?.let { schedule ->
-            ScheduleResult(schedule = schedule)
+            ScheduleResult(
+                schedule = schedule,
+                onSaveSchedule = onSaveSchedule,
+            )
         }
     }
 }
@@ -235,7 +250,27 @@ private fun ErrorCard(message: String) {
 }
 
 @Composable
-private fun ScheduleResult(schedule: Schedule) {
+private fun SuccessCard(message: String) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = message,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
+    }
+}
+
+@Composable
+private fun ScheduleResult(
+    schedule: Schedule,
+    onSaveSchedule: () -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = "Cronograma gerado",
@@ -256,6 +291,13 @@ private fun ScheduleResult(schedule: Schedule) {
                 schedule.farmName?.let { Text(text = "Fazenda: $it") }
                 schedule.responsibleName?.let { Text(text = "Responsável: $it") }
             }
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onSaveSchedule,
+        ) {
+            Text("Salvar cronograma")
         }
 
         schedule.orderedEvents.forEach { event ->
@@ -315,6 +357,7 @@ private fun ScheduleCreationScreenPreview() {
             onFarmNameChanged = {},
             onResponsibleNameChanged = {},
             onGenerateSchedule = {},
+            onSaveSchedule = {},
         )
     }
 }
