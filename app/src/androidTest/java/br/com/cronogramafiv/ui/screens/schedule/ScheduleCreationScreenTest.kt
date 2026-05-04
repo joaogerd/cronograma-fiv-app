@@ -23,6 +23,7 @@ class ScheduleCreationScreenTest {
                     onFarmNameChanged = {},
                     onResponsibleNameChanged = {},
                     onGenerateSchedule = {},
+                    onSaveSchedule = {},
                 )
             }
         }
