@@ -15,7 +15,15 @@ class ScheduleCreationScreenTest {
     fun scheduleCreationScreenShowsMainFields() {
         composeTestRule.setContent {
             CronogramaFivTheme {
-                ScheduleCreationScreen()
+                ScheduleCreationScreen(
+                    uiState = ScheduleCreationUiState(),
+                    onProtocolSelected = {},
+                    onAnchorSelected = {},
+                    onDateTextChanged = {},
+                    onFarmNameChanged = {},
+                    onResponsibleNameChanged = {},
+                    onGenerateSchedule = {},
+                )
             }
         }
 
