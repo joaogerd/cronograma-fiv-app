@@ -19,6 +19,7 @@ data class ScheduleCreationUiState(
     val responsibleName: String = "",
     val generatedSchedule: Schedule? = null,
     val errorMessage: String? = null,
+    val successMessage: String? = null,
 ) {
     val hasGeneratedSchedule: Boolean
         get() = generatedSchedule != null
