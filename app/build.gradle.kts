@@ -41,7 +41,7 @@ android {
 
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.03.00")
-    val roomVersion = "2.9.4"
+    val roomVersion = "2.8.4"
 
     implementation(composeBom)
     androidTestImplementation(composeBom)
