@@ -15,7 +15,7 @@ import br.com.cronogramafiv.data.local.entity.ScheduleEventEntity
         ScheduleEventEntity::class,
     ],
     version = 1,
-    exportSchema = true,
+    exportSchema = false,
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
