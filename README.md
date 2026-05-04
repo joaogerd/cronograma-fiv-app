@@ -2,7 +2,7 @@
 
 Aplicativo para cálculo e organização de cronogramas reprodutivos bovinos, com foco em protocolos de sincronização, FIV/PIVE, transferência de embriões, acompanhamento de prenhez e rotinas associadas.
 
-> Estado atual: o repositório possui a aplicação desktop original em Python/PyQt5 e uma base inicial Android nativa em Kotlin/Jetpack Compose em desenvolvimento.
+> Estado atual: o repositório possui a aplicação desktop original em Python/PyQt5 e uma base Android nativa em Kotlin/Jetpack Compose com fluxo inicial de criação de cronograma em desenvolvimento.
 
 ## Objetivo do produto
 
@@ -17,6 +17,18 @@ O app deverá atender principalmente:
 - laboratórios de FIV;
 - equipes que realizam OPU, FIV, CIV, feeding, transferência de embriões e criopreservação.
 
+## Especificação de produto e interface
+
+A direção oficial do produto, UX, interface, navegação e roadmap visual está documentada em:
+
+- [`docs/PRODUCT_AND_UI_SPEC.md`](docs/PRODUCT_AND_UI_SPEC.md)
+
+Essa especificação define o app como uma ferramenta simples de campo, organizada em torno do fluxo:
+
+```text
+Escolher protocolo → escolher data → gerar cronograma → revisar → salvar/compartilhar
+```
+
 ## Funcionalidades atuais
 
 A versão atual em Python/PyQt5 permite:
@@ -28,15 +40,17 @@ A versão atual em Python/PyQt5 permite:
 - visualizar o cronograma calculado;
 - imprimir o cronograma na aplicação desktop.
 
-A base Android inicial já contém:
+A versão Android em desenvolvimento já contém:
 
 - projeto Gradle Kotlin DSL;
 - módulo Android `app`;
 - `MainActivity` em Kotlin;
 - Jetpack Compose;
 - Material 3;
-- tema inicial;
-- tela placeholder de bootstrap.
+- modelos de domínio;
+- protocolos padrão;
+- motor de geração de cronogramas;
+- tela MVP para criação e visualização inicial de cronograma.
 
 ## Stack atual
 
@@ -72,36 +86,30 @@ Instruções iniciais de build Android:
 
 A versão Android ainda não possui:
 
-- modelos de domínio;
-- geração real de cronogramas;
+- ViewModel formal para a tela de criação;
+- DatePicker visual;
 - persistência local;
 - histórico de cronogramas;
 - cadastro editável de protocolos;
 - notificações e lembretes;
 - exportação mobile em PDF/compartilhamento;
-- testes automatizados;
 - CI/CD completo.
-
-Além disso, a lógica de interface e a lógica de cálculo da versão desktop ainda estão concentradas em `main.py`, o que é aceitável para um protótipo desktop, mas insuficiente para um aplicativo Android evolutivo.
 
 ## Roadmap Android
 
 O plano técnico para transformar este projeto em um aplicativo Android está documentado em:
 
 - [`docs/ANDROID_ROADMAP.md`](docs/ANDROID_ROADMAP.md)
+- [`docs/PRODUCT_AND_UI_SPEC.md`](docs/PRODUCT_AND_UI_SPEC.md)
 
-Resumo do caminho recomendado:
+Sequência definida a partir do MVP UI:
 
-1. documentar e limpar o estado atual do projeto;
-2. criar base Android nativa com Kotlin e Jetpack Compose;
-3. modelar protocolos, etapas e cronogramas;
-4. implementar o motor de geração automática de cronogramas;
-5. criar a interface MVP;
-6. adicionar persistência local com Room;
-7. permitir edição de protocolos;
-8. implementar histórico, compartilhamento e lembretes;
-9. preparar testes, CI e release;
-10. validar monetização futura.
+1. MVP UI funcional básica;
+2. ViewModel e estado de UI;
+3. persistência local com Room;
+4. histórico;
+5. compartilhamento/exportação;
+6. lembretes/notificações.
 
 ## Arquitetura Android recomendada
 
