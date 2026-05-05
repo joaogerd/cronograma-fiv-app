@@ -42,6 +42,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ScheduleCreationRoute(
     scheduleRepository: ScheduleRepository,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: ScheduleCreationViewModel = viewModel(
         factory = ScheduleCreationViewModelFactory(
@@ -59,6 +60,7 @@ fun ScheduleCreationRoute(
         onResponsibleNameChanged = viewModel::onResponsibleNameChanged,
         onGenerateSchedule = viewModel::generateSchedule,
         onSaveSchedule = viewModel::saveGeneratedSchedule,
+        modifier = modifier,
     )
 }
 
@@ -72,9 +74,10 @@ fun ScheduleCreationScreen(
     onResponsibleNameChanged: (String) -> Unit,
     onGenerateSchedule: () -> Unit,
     onSaveSchedule: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(20.dp),
